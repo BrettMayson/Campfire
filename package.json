@@ -1,0 +1,91 @@
+{
+  "name": "campfire",
+  "displayName": "Campfire",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.77.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "campfire.instruct",
+        "title": "Campfire: Start Instructor Mode"
+      }
+    ],
+    "viewsContainers": {
+			"activitybar": [
+				{
+					"id": "campfire",
+					"title": "Campfire",
+					"icon": "media/icon.svg"
+				}
+			]
+		},
+    "views": {
+      "campfire": [
+        {
+          "id": "instructorFiles",
+          "name": "Instructor Files",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "configuration": [
+      {
+        "type": "object",
+        "title": "Campfire",
+        "properties": {
+          "campfire.name": {
+            "type": "string",
+            "default": "",
+            "description": "Your name around the campfire"
+          },
+          "campfire.pin": {
+            "type": "string",
+            "default": "",
+            "description": "The pin to use when looking for a campfire session"
+          },
+          "campfire.instructor": {
+            "type": "string",
+            "default": "",
+            "description": "Instructor to connect to, disables searching for campfire sessions"
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.77.0",
+    "@types/ws": "^8.5.4",
+    "@typescript-eslint/eslint-plugin": "^5.59.1",
+    "@typescript-eslint/parser": "^5.59.1",
+    "@vscode/test-electron": "^2.3.0",
+    "eslint": "^8.39.0",
+    "glob": "^8.1.0",
+    "mocha": "^10.2.0",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "dgram": "^1.0.1",
+    "ws": "^8.13.0"
+  }
+}
