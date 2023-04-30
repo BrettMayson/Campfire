@@ -6,8 +6,7 @@ import { getMode } from "./state";
 export class Sonar {
   private socket: dgram.Socket = dgram.createSocket("udp4");
   private searcher: NodeJS.Timeout | undefined;
-  // array of callbacks for each event
-  private callbacks: { [key: string]: ((msg: any) => void)[] } = {};
+  private callbacks: { found: ((msg: any) => void)[] } = { found: [] };
 
   constructor() {
     this.student();
@@ -55,7 +54,6 @@ export class Sonar {
         if (pin === undefined || pin === "") {
           return;
         }
-        console.log(`looking on ${host}`);
         socket.send(`Campfire:${pin}`, 14352, host);
       }
       this.searcher = setInterval(() => {
@@ -71,7 +69,7 @@ export class Sonar {
         return;
       }
       if (msg.toString() === `Campfire:${pin}`) {
-        this.callbacks["found"].forEach((callback) => {
+        this.callbacks.found.forEach((callback) => {
           callback(rinfo);
         });
       }
@@ -83,10 +81,10 @@ export class Sonar {
     }
   }
 
-  on(event: string, callback: (msg: any) => void) {
-    if (this.callbacks[event] === undefined) {
-      this.callbacks[event] = [];
+  onFound(callback: (msg: any) => void) {
+    if (this.callbacks.found === undefined) {
+      this.callbacks.found = [];
     }
-    this.callbacks[event].push(callback);
+    this.callbacks.found.push(callback);
   }
 }

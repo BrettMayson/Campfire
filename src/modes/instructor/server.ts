@@ -1,0 +1,67 @@
+import * as vscode from "vscode";
+import { WebSocketServer } from "ws";
+
+export class Student {
+  name: string;
+
+  constructor(name: string) {
+    this.name = name;
+  }
+}
+
+class Server {
+  _wss: WebSocketServer = new WebSocketServer({ port: 14353 });
+  _students: { [key: string]: Student } = {};
+
+  constructor() {
+    this._wss.on("connection", (ws, req) => {
+      let name = "Unknown";
+      let remote = `${req.socket.remoteAddress}:${req.socket.remotePort}`;
+
+      ws.on("error", console.error);
+
+      ws.on("message", (data) => {
+        let message = JSON.parse(data.toString());
+        switch (message.type) {
+          case "ident":
+            name = message.name;
+            vscode.window.showInformationMessage(
+              `Student ${message.name} connected`
+            );
+            this._students[remote] = new Student(message.name);
+            ws.send(JSON.stringify({ type: "connect" }));
+            break;
+        }
+      });
+
+      ws.on("close", () => {
+        vscode.window.showInformationMessage(`Student ${name} disconnected`);
+        delete this._students[remote];
+      });
+
+      ws.send(JSON.stringify({ type: "ident" }));
+    });
+  }
+
+  broadcast(message: any) {
+    this._wss.clients.forEach((client) => {
+      client.send(message);
+    });
+  }
+
+  dispose() {
+    this._wss.close();
+  }
+
+  students() {
+    return Object.values(this._students);
+  }
+}
+
+var server: Server | undefined = undefined;
+export function getServer() {
+  if (server === undefined) {
+    server = new Server();
+  }
+  return server;
+}

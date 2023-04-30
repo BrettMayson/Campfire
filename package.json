@@ -16,25 +16,29 @@
   "contributes": {
     "commands": [
       {
-        "command": "campfire.instruct",
-        "title": "Campfire: Start Instructor Mode"
+        "command": "campfire.start",
+        "category": "Campfire",
+        "title": "Start a Campfire",
+        "enablement": "campfire.valid && campfire.mode == 'searching'"
       }
     ],
     "viewsContainers": {
-			"activitybar": [
-				{
-					"id": "campfire",
-					"title": "Campfire",
-					"icon": "media/icon.svg"
-				}
-			]
-		},
+      "activitybar": [
+        {
+          "id": "campfire",
+          "title": "Campfire",
+          "icon": "media/icon.svg",
+          "when": "campfire.valid"
+        }
+      ]
+    },
     "views": {
-      "campfire": [
+      "explorer": [
         {
           "id": "instructorFiles",
           "name": "Instructor Files",
-          "icon": "media/icon.svg"
+          "icon": "media/icon.svg",
+          "when": "campfire.mode == 'student'"
         }
       ]
     },
@@ -67,8 +71,7 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "lint": "eslint src --ext ts"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
