@@ -35,39 +35,31 @@ export function startEvents(context: vscode.ExtensionContext) {
     context.subscriptions
   );
 
-  vscode.workspace.onDidCreateFiles(
-    (event) => {
-      if (getMode() !== "instructor") {
-        return;
-      }
-      console.log(`files created: ${event.files}`);
+  vscode.workspace.onDidCreateFiles((event) => {
+    if (getMode() !== "instructor") {
+      return;
     }
-  );
+    console.log(`files created: ${event.files}`);
+  });
 
-  vscode.workspace.onDidDeleteFiles(
-    (event) => {
-      if (getMode() !== "instructor") {
-        return;
-      }
-      console.log(`files deleted: ${event.files}`);
+  vscode.workspace.onDidDeleteFiles((event) => {
+    if (getMode() !== "instructor") {
+      return;
     }
-  );
+    console.log(`files deleted: ${event.files}`);
+  });
 
-  vscode.workspace.onDidRenameFiles(
-    (event) => {
-      if (getMode() !== "instructor") {
-        return;
-      }
-      console.log(`files renamed: ${event.files}`);
+  vscode.workspace.onDidRenameFiles((event) => {
+    if (getMode() !== "instructor") {
+      return;
     }
-  );
+    console.log(`files renamed: ${event.files}`);
+  });
 
-  vscode.workspace.onDidSaveTextDocument(
-    (document) => {
-      if (getMode() !== "instructor") {
-        return;
-      }
-      console.log(`document saved: ${document.fileName}`);
+  vscode.workspace.onDidSaveTextDocument((document) => {
+    if (getMode() !== "instructor") {
+      return;
     }
-  );
+    console.log(`document saved: ${document.fileName}`);
+  });
 }

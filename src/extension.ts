@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 import { InstructorFilesProvider } from "./views/explorer/instructorFiles";
 
-import { getMode, getSonar, getStatus } from "./state";
+import { getSonar, getStatus } from "./state";
 import start from "./commands/start";
 import student from "./modes/student/connect";
 import { startEvents } from "./modes/instructor/events";
