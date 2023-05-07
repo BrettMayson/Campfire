@@ -41,6 +41,7 @@ export class Sonar {
           .getConfiguration("campfire")
           .get<string>("instructor");
         let host = "255.255.255.255";
+        console.log({ instructor, getMode: getMode() });
         if (instructor !== undefined && instructor !== "") {
           host = instructor;
         }
@@ -54,6 +55,7 @@ export class Sonar {
         if (pin === undefined || pin === "") {
           return;
         }
+        console.log(`Searching for Campfire on ${host}`);
         socket.send(`Campfire:${pin}`, 14352, host);
       }
       this.searcher = setInterval(() => {

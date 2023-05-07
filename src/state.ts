@@ -1,5 +1,7 @@
 import * as vscode from "vscode";
 import { Sonar } from "./sonar";
+import { InstructorFilesProvider } from "./views/explorer/instructorFiles";
+import { Directory } from "./utils/readDirectory";
 
 // Mode
 var mode: "searching" | "student" | "instructor" = "searching";
@@ -50,3 +52,36 @@ export function getStatus() {
   return status;
 }
 setMode("searching");
+
+// Remote Instructor State
+var instructorState: {
+  files: Directory[],
+} = {
+  files: []
+};
+
+export function setInstructorState(state: {
+  files: Directory[],
+}) {
+  instructorState = state;
+}
+
+export function getInstructorState() {
+  return instructorState;
+}
+
+export function getInstructorFiles() {
+  return instructorState.files;
+}
+
+export function setInstructorFiles(files: Directory[]) {
+  instructorState.files = files;
+  getInstructorFilesProvider().refresh();
+}
+
+// Instructor Files Provider
+var instructorFilesProvider: InstructorFilesProvider = new InstructorFilesProvider();
+
+export function getInstructorFilesProvider() {
+  return instructorFilesProvider;
+}

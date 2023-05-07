@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { WebSocketServer } from "ws";
+import { readDirectory } from "../../utils/readDirectory";
 
 export class Student {
   name: string;
@@ -20,7 +21,7 @@ class Server {
 
       ws.on("error", console.error);
 
-      ws.on("message", (data) => {
+      ws.on("message", async (data) => {
         let message = JSON.parse(data.toString());
         switch (message.type) {
           case "ident":
@@ -31,6 +32,10 @@ class Server {
             this._students[remote] = new Student(message.name);
             ws.send(JSON.stringify({ type: "connect" }));
             break;
+          case "files":
+            let files = await readDirectory(vscode.workspace.workspaceFolders![0].uri);
+            console.log({ files });
+            ws.send(JSON.stringify({ type: "files", files }));
         }
       });
 

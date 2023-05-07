@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 import { InstructorFilesProvider } from "./views/explorer/instructorFiles";
 
-import { getSonar, getStatus } from "./state";
+import { getInstructorFilesProvider, getSonar, getStatus } from "./state";
 import start from "./commands/start";
 import student from "./modes/student/connect";
 import { startEvents } from "./modes/instructor/events";
@@ -13,9 +13,6 @@ export function activate(context: vscode.ExtensionContext) {
 
   let valid = (vscode.workspace.workspaceFolders || []).length === 1;
   vscode.commands.executeCommand("setContext", "campfire.valid", valid);
-  if (!valid) {
-    return;
-  }
 
   getSonar().onFound(student);
 
@@ -29,8 +26,10 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {}
 
 function setup(context: vscode.ExtensionContext) {
+  const instructorFileProvider = getInstructorFilesProvider();
   vscode.window.registerTreeDataProvider(
     "instructorFiles",
-    new InstructorFilesProvider()
+    instructorFileProvider
   );
+  instructorFileProvider.refresh();
 }

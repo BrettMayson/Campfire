@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as dgram from "dgram";
 
-import { setMode } from "../../state";
+import { setInstructorFiles, setMode } from "../../state";
 import WebSocket = require("ws");
 
 export default function student(remote: dgram.RemoteInfo) {
@@ -42,6 +42,11 @@ export default function student(remote: dgram.RemoteInfo) {
         break;
       case "connect":
         vscode.window.showInformationMessage("Connected to the Campfire");
+        ws.send(JSON.stringify({ type: "files" }));
+        break;
+      case "files":
+        vscode.window.showInformationMessage("Received files");
+        setInstructorFiles(message.files);
         break;
     }
   });
