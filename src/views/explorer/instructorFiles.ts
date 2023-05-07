@@ -3,8 +3,11 @@ import { getInstructorFiles } from "../../state";
 import { Directory } from "../../utils/readDirectory";
 
 export class InstructorFilesProvider implements vscode.TreeDataProvider<File> {
-  private _onDidChangeTreeData: vscode.EventEmitter<File | undefined | null | void> = new vscode.EventEmitter<File | undefined | null | void>();
-  readonly onDidChangeTreeData: vscode.Event<File | undefined | null | void> = this._onDidChangeTreeData.event;
+  private _onDidChangeTreeData: vscode.EventEmitter<
+    File | undefined | null | void
+  > = new vscode.EventEmitter<File | undefined | null | void>();
+  readonly onDidChangeTreeData: vscode.Event<File | undefined | null | void> =
+    this._onDidChangeTreeData.event;
 
   constructor() {}
 
@@ -16,16 +19,30 @@ export class InstructorFilesProvider implements vscode.TreeDataProvider<File> {
     if (element) {
       return Promise.resolve(
         Object.values(element.children || {}).map((file) => {
-          return new File(element.path + "/" + file.name, file.name, file.children, (file.children) ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None);
-        }
-      ));
+          return new File(
+            element.path + "/" + file.name,
+            file.name,
+            file.children,
+            file.children
+              ? vscode.TreeItemCollapsibleState.Collapsed
+              : vscode.TreeItemCollapsibleState.None
+          );
+        })
+      );
     } else {
       const files = getInstructorFiles();
       return Promise.resolve(
         Object.values(files).map((file) => {
-          return new File("",  file.name, file.children, (file.children) ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None);
-        }
-      ));
+          return new File(
+            "",
+            file.name,
+            file.children,
+            file.children
+              ? vscode.TreeItemCollapsibleState.Collapsed
+              : vscode.TreeItemCollapsibleState.None
+          );
+        })
+      );
     }
   }
 
@@ -43,7 +60,7 @@ class File extends vscode.TreeItem {
   ) {
     super(label, collapsibleState);
     this.tooltip = this.label;
-    this.contextValue = (children) ? "directory" : "file";
+    this.contextValue = children ? "directory" : "file";
     this.children = children;
     this.path = path;
   }
