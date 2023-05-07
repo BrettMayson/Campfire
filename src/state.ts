@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { Sonar } from "./sonar";
 import { InstructorFilesProvider } from "./views/explorer/instructorFiles";
 import { Directory } from "./utils/readDirectory";
+import { LocalStudent } from "./modes/student/connect";
 
 // Mode
 var mode: "searching" | "student" | "instructor" = "searching";
@@ -11,11 +12,13 @@ export function setMode(newMode: "searching" | "student" | "instructor") {
   switch (newMode) {
     case "searching":
       hideStatus();
+      student = undefined;
       break;
     case "student":
       setStatus("$(flame) Connected");
       break;
     case "instructor":
+      student = undefined;
       const pin = vscode.workspace
         .getConfiguration("campfire")
         .get<string>("pin");
@@ -25,6 +28,15 @@ export function setMode(newMode: "searching" | "student" | "instructor") {
 }
 export function getMode() {
   return mode;
+}
+
+var student: LocalStudent | undefined = undefined;
+export function getStudent() {
+  return student;
+}
+export function setStudent(newStudent: LocalStudent) {
+  student = newStudent;
+  setMode("student");
 }
 
 // Sonar

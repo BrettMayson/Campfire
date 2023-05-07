@@ -9,6 +9,13 @@ export async function readDirectory(root: vscode.Uri): Promise<Directory[]> {
   let structure = [];
   let files = await vscode.workspace.fs.readDirectory(root);
   for (let file of files) {
+    if (file[0] === ".git") {
+      continue;
+    }
+    if (file[0][0] === ".") {
+      console.log(`Dotfile: ${file[0]}`);
+      continue;
+    }
     if (file[1] === vscode.FileType.Directory) {
       let children = await readDirectory(vscode.Uri.joinPath(root, file[0]));
       structure.push({

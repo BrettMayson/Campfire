@@ -20,7 +20,7 @@ export class InstructorFilesProvider implements vscode.TreeDataProvider<File> {
       return Promise.resolve(
         Object.values(element.children || {}).map((file) => {
           return new File(
-            element.path + "/" + file.name,
+            element.parent + "/" + file.name,
             file.name,
             file.children,
             file.children
@@ -53,16 +53,21 @@ export class InstructorFilesProvider implements vscode.TreeDataProvider<File> {
 
 class File extends vscode.TreeItem {
   constructor(
-    public readonly path: string,
-    public readonly label: string,
+    public readonly parent: string,
+    public readonly name: string,
     public readonly children: Directory[] | undefined,
     public readonly collapsibleState: vscode.TreeItemCollapsibleState
   ) {
-    super(label, collapsibleState);
-    this.tooltip = this.label;
+    super(name, collapsibleState);
+    this.tooltip = this.name;
     this.contextValue = children ? "directory" : "file";
     this.children = children;
-    this.path = path;
+    this.parent = parent;
+    this.command = {
+      title: "View Remote File",
+      command: "vscode.open",
+      arguments: ["campfire:" + this.parent + "/" + this.name, 2, "Instructor: " + this.name],
+    };
   }
 
   iconPath = {
@@ -70,11 +75,3 @@ class File extends vscode.TreeItem {
     dark: "",
   };
 }
-
-/// Root
-///   A
-///     Hello
-///       World
-///   B
-///     Hello
-///       World

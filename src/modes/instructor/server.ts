@@ -1,8 +1,9 @@
 import * as vscode from "vscode";
 import { WebSocketServer } from "ws";
 import { readDirectory } from "../../utils/readDirectory";
+import { FromServer, ToServer } from "../../model/message";
 
-export class Student {
+export class RemoteStudent {
   name: string;
 
   constructor(name: string) {
@@ -12,7 +13,7 @@ export class Student {
 
 class Server {
   _wss: WebSocketServer = new WebSocketServer({ port: 14353 });
-  _students: { [key: string]: Student } = {};
+  _students: { [key: string]: RemoteStudent } = {};
 
   constructor() {
     this._wss.on("connection", (ws, req) => {
@@ -21,21 +22,31 @@ class Server {
 
       ws.on("error", console.error);
 
+      function send(msg: FromServer) {
+        ws.send(JSON.stringify(msg));
+      }
+      
       ws.on("message", async (data) => {
-        let message = JSON.parse(data.toString());
+        let message: ToServer = JSON.parse(data.toString());
         switch (message.type) {
           case "ident":
             name = message.name;
             vscode.window.showInformationMessage(
               `Student ${message.name} connected`
             );
-            this._students[remote] = new Student(message.name);
-            ws.send(JSON.stringify({ type: "connect" }));
+            this._students[remote] = new RemoteStudent(message.name);
+            send({ type: "connect" });
             break;
           case "files":
             let files = await readDirectory(vscode.workspace.workspaceFolders![0].uri);
             console.log({ files });
-            ws.send(JSON.stringify({ type: "files", files }));
+            send({ type: "files", files });
+            break;
+          case "fileContent": 
+            const filePath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, message.fileName);
+            let fileContent = await vscode.workspace.fs.readFile(filePath);
+            send({ key: message.key, type: "fileContent", data: fileContent.toString() });
+            break;
         }
       });
 
